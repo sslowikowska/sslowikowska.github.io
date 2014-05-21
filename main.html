@@ -1,6 +1,11 @@
+<!DOCTYPE HTML>
 <html>
 <head>
-<title>title</title>
+<title>Super stronka</title>
+
+<meta http-equiv="content-type" content="text/html; charset=UTF-8">
+<link rel="stylesheet" type="text/css" href="css/style.css">
+
 <script src="jquery-1.11.1.min.js"></script>
 <script type="text/javascript">
 $(document).ready(
@@ -36,13 +41,57 @@ function addPhoto() {
 }
 
 </script>
+
 </head>
-<body style="background-color:white;margin:0px;">
-<div id="header" style="background-color:blue;color:white;width:100%;margin-bottom:10px;top:0;height:20px;">
-	<div style="float:right;">Sylwia Słowikowska <button title="Log out">(L)</button></div>
+<body>
+  <div id="main">
+    <header><div id="logo">
+        <div id="logo_text">
+         
+          <h1><a href="index.html">Super<span class="logo_colour">stronka</span></a></h1>
+          <h2>dodajesz fotki i w ogóle.</h2>
+        </div>
+      </div>
+	  
+	  
+      <nav><div id="menu_container">
+	  
+          <ul class="sf-menu" id="nav">
+		  
+<li class="selected"><a href="index.html">Strona główna</a></li>
+            <li><a href="#">Wyloguj się</a></li>
+
+          </ul>
 </div>
-<div id="leftPanel" style="background-color:gray;width:1000px;height:100%;float:left;margin-bottom:30px;margin-left:5px;">
-	<table>
+      </nav>
+	  </header>
+	  
+	  <div id="site_content">
+	  
+      <div id="sidebar_container">
+        <div class="sidebar">
+		
+		<center>
+    <button onclick='showMyPhotos()'>Moje zdjęcia</button><br />	
+	<button onclick='showMyFavourites()'>Ulubione</button><br />
+	<button onclick='addPhoto()'>Dodaj zdjęcie</button><br />
+	
+	</center>
+
+        </div>
+
+      </div>
+	  
+	  
+      <div id="content">
+        <h1>Ranking</h1>
+
+		<p>Ble ble ble ble </p>
+		
+		
+        <h2>Wszystkie zdjęcia</h2>
+
+		<table>
 		<tr>
 			<td></td>
 			<td></td>
@@ -59,13 +108,28 @@ function addPhoto() {
 			<td></td>
 		</tr>
 	</table>
-</div>
-<div style="float:right;background-color:blue;color:white;width:100px;margin-right:5px;">
 	
-	<button onclick='showMyPhotos()'>Moje zdjęcia</button><br />	
-	<button onclick='showMyFavourites()'>Ulubione</button><br />
-	<button onclick='addPhoto()'>Dodaj zdjęcie</button><br />
+	<p>Bleb ble ble 
+	ble ble 
+	ble ble ble ble ble ble ble ble 
+	ble ble ble ble ble ble ble ble ble ble 
+	ble ble ble ble ble ble ble ble ble ble ble ble ble ble 
+	ble ble ble ble ble ble ble ble ble ble 
+	ble ble ble ble ble ble ble ble ble ble 
+	ble ble ble ble ble ble ble ble 
+	
+	</p>
+	
 </div>
-<div id="footer" style="background-color:blue;color:white;width:100%;margin-top:10px;bottom:0;height:20px;position:fixed;"></div>
+    </div>
+    <div id="scroll">
+      <a title="w górę" class="top" href="#"><img src="images/top.png" alt="top"></a>
+    </div>
+    <footer><p>
+	Sylwia Słowikowska | 2014
+</p>
+    </footer>
+</div>
+
 </body>
 </html>
