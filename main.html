@@ -1,135 +1,141 @@
 <!DOCTYPE HTML>
 <html>
+
 <head>
-<title>Super stronka</title>
+    <title>Super stronka</title>
 
-<meta http-equiv="content-type" content="text/html; charset=UTF-8">
-<link rel="stylesheet" type="text/css" href="css/style.css">
+    <meta http-equiv="content-type" content="text/html; charset=UTF-8">
+    <link rel="stylesheet" type="text/css" href="css/style.css">
 
-<script src="jquery-1.11.1.min.js"></script>
-<script type="text/javascript">
-$(document).ready(
-	
-);
+    <script src="jquery-1.11.1.min.js"></script>
+    <script type="text/javascript">
+        $(document).ready(
 
-function getPhotosFromServer() {
-	return [
-		'<img src="1.bmp" height="42" width="42"></img>',
-		'<img src="2.bmp" height="42" width="42"></img>',
-		'<img src="3.bmp" height="42" width="42"></img>',
-		'<img src="4.bmp" height="42" width="42"></img>',
-		'<img src="5.bmp" height="42" width="42"></img>',
-		'<img src="6.bmp" height="42" width="42"></img>',
-		'<img src="7.bmp" height="42" width="42"></img>',
-		'<img src="8.bmp" height="42" width="42"></img>',
-		'<img src="9.bmp" height="42" width="42"></img>'
-	];
-}
+        );
 
-function showMyPhotos() {
-	var photosFromServer = getPhotosFromServer(); //nie zadziała
-	var cells = $('#leftPanel td');
-	for (var i = 0; i < 9; i++) {
-		$(cells[i]).append(photosFromServer[i]);
-	}
-}
+        function getPhotosFromServer() {
+            return [
+                '<img src="1.bmp" height="42" width="42"></img>',
+                '<img src="2.bmp" height="42" width="42"></img>',
+                '<img src="3.bmp" height="42" width="42"></img>',
+                '<img src="4.bmp" height="42" width="42"></img>',
+                '<img src="5.bmp" height="42" width="42"></img>',
+                '<img src="6.bmp" height="42" width="42"></img>',
+                '<img src="7.bmp" height="42" width="42"></img>',
+                '<img src="8.bmp" height="42" width="42"></img>',
+                '<img src="9.bmp" height="42" width="42"></img>'
+            ];
+        }
 
-function showMyFavourites() {
-}
+        function showMyPhotos() {
+            var photosFromServer = getPhotosFromServer(); //nie zadziała
+            var cells = $('#leftPanel td');
+            for (var i = 0; i < 9; i++) {
+                $(cells[i]).append(photosFromServer[i]);
+            }
+        }
 
-function addPhoto() {
-}
+        function showMyFavourites() {}
 
-</script>
+        function addPhoto() {}
+    </script>
 
 </head>
+
 <body>
-  <div id="main">
-    <header><div id="logo">
-        <div id="logo_text">
-         
-          <h1><a href="index.html">Super<span class="logo_colour">stronka</span></a></h1>
-          <h2>dodajesz fotki i w ogóle.</h2>
+    <div id="main">
+        <header>
+            <div id="logo">
+                <div id="logo_text">
+
+                    <h1><a href="index.html">Super<span class="logo_colour">stronka</span></a></h1>
+                    <h2>dodajesz fotki i w ogóle.</h2>
+                </div>
+            </div>
+
+
+            <nav>
+                <div id="menu_container">
+
+                    <ul class="sf-menu" id="nav">
+
+                        <li class="selected"><a href="index.html">Strona główna</a>
+                        </li>
+                        <li><a href="#">Wyloguj się</a>
+                        </li>
+
+                    </ul>
+                </div>
+            </nav>
+        </header>
+
+        <div id="site_content">
+
+            <div id="sidebar_container">
+                <div class="sidebar">
+
+                    <center>
+                        <button onclick='showMyPhotos()'>Moje zdjęcia</button>
+                        <br />
+                        <button onclick='showMyFavourites()'>Ulubione</button>
+                        <br />
+                        <button onclick='addPhoto()'>Dodaj zdjęcie</button>
+                        <br />
+
+                    </center>
+
+                </div>
+
+            </div>
+
+
+            <div id="content">
+                <h1>Ranking</h1>
+
+                <p>Ble ble ble ble</p>
+
+
+                <h2>Wszystkie zdjęcia</h2>
+
+                <table>
+                    <tr>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                    </tr>
+                    <tr>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                    </tr>
+                    <tr>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                    </tr>
+                </table>
+
+                <p>
+                	Bleb ble ble ble ble ble ble ble ble ble ble ble ble ble ble ble ble
+                	ble ble ble ble ble ble ble ble ble ble ble ble ble ble ble ble ble ble
+                	ble ble ble ble ble ble ble ble ble ble ble ble ble ble ble ble ble ble
+                	ble ble ble ble ble ble ble ble ble ble ble ble
+                </p>
+
+            </div>
         </div>
-      </div>
-	  
-	  
-      <nav><div id="menu_container">
-	  
-          <ul class="sf-menu" id="nav">
-		  
-<li class="selected"><a href="index.html">Strona główna</a></li>
-            <li><a href="#">Wyloguj się</a></li>
-
-          </ul>
-</div>
-      </nav>
-	  </header>
-	  
-	  <div id="site_content">
-	  
-      <div id="sidebar_container">
-        <div class="sidebar">
-		
-		<center>
-    <button onclick='showMyPhotos()'>Moje zdjęcia</button><br />	
-	<button onclick='showMyFavourites()'>Ulubione</button><br />
-	<button onclick='addPhoto()'>Dodaj zdjęcie</button><br />
-	
-	</center>
-
+        <div id="scroll">
+            <a title="w górę" class="top" href="#">
+                <img src="images/top.png" alt="top">
+            </a>
         </div>
-
-      </div>
-	  
-	  
-      <div id="content">
-        <h1>Ranking</h1>
-
-		<p>Ble ble ble ble </p>
-		
-		
-        <h2>Wszystkie zdjęcia</h2>
-
-		<table>
-		<tr>
-			<td></td>
-			<td></td>
-			<td></td>
-		</tr>
-		<tr>
-			<td></td>
-			<td></td>
-			<td></td>
-		</tr>
-		<tr>
-			<td></td>
-			<td></td>
-			<td></td>
-		</tr>
-	</table>
-	
-	<p>Bleb ble ble 
-	ble ble 
-	ble ble ble ble ble ble ble ble 
-	ble ble ble ble ble ble ble ble ble ble 
-	ble ble ble ble ble ble ble ble ble ble ble ble ble ble 
-	ble ble ble ble ble ble ble ble ble ble 
-	ble ble ble ble ble ble ble ble ble ble 
-	ble ble ble ble ble ble ble ble 
-	
-	</p>
-	
-</div>
+        <footer>
+            <p>
+                Sylwia Słowikowska | 2014
+            </p>
+        </footer>
     </div>
-    <div id="scroll">
-      <a title="w górę" class="top" href="#"><img src="images/top.png" alt="top"></a>
-    </div>
-    <footer><p>
-	Sylwia Słowikowska | 2014
-</p>
-    </footer>
-</div>
 
 </body>
+
 </html>
