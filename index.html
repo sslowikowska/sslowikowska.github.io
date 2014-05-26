@@ -15,7 +15,7 @@
 
         function showMyPhotos() {
             var photos = new Array();
-            $.ajax({url: '/photos', type: 'POST'}).done(function (data) {
+            $.ajax({url: '/pho4tos', type: 'POST'}).done(function (data) {
 				data = JSON.parse(data);
 				photos = data.photos;
 				var photosNum = photos.length;
@@ -33,7 +33,19 @@
         function showMyFavourites() {}
 
         function addPhoto() {
-			
+			var imageData = new FormData($('form')[0]);
+			$.ajax({
+				url: '/upload',
+				type: 'POST',
+				data: imageData,
+				cache: false,
+				contentType: false,
+				processData: false
+				}).error(function (data) {
+				console.log('ERROR');
+			}).success(function (data) {
+				console.log('SUCCESS');
+			});
 		}
     </script>
 
@@ -78,7 +90,11 @@
                         <br />
                         <button onclick='addPhoto()'>Dodaj zdjęcie</button>
                         <br />
-
+						<form method="post" enctype="multipart/form-data">
+							<label for="file">Filename:</label>
+							<input type="file" name="file" id="file"><br>
+							<input type="button" value="Upload">
+						</form>
                     </center>
 
                 </div>
