@@ -13,31 +13,28 @@
 
         );
 
-        function getPhotosFromServer() {
-            return [
-                '<img src="1.bmp" height="42" width="42"></img>',
-                '<img src="2.bmp" height="42" width="42"></img>',
-                '<img src="3.bmp" height="42" width="42"></img>',
-                '<img src="4.bmp" height="42" width="42"></img>',
-                '<img src="5.bmp" height="42" width="42"></img>',
-                '<img src="6.bmp" height="42" width="42"></img>',
-                '<img src="7.bmp" height="42" width="42"></img>',
-                '<img src="8.bmp" height="42" width="42"></img>',
-                '<img src="9.bmp" height="42" width="42"></img>'
-            ];
-        }
-
         function showMyPhotos() {
-            var photosFromServer = getPhotosFromServer(); //nie zadziała
-            var cells = $('#leftPanel td');
-            for (var i = 0; i < 9; i++) {
-                $(cells[i]).append(photosFromServer[i]);
-            }
+            var photos = new Array();
+            $.ajax({url: '/photos', type: 'POST'}).done(function (data) {
+				data = JSON.parse(data);
+				photos = data.photos;
+				var photosNum = photos.length;
+				var cells = $('#leftPanel td');
+				var toReplace = 'binaryData';
+				var imageTemplate = '<img src="data:image/jpeg;base64' + toReplace + '" />';
+				for (var i = 0; i < photosNum; i++) {
+					var binaryData = photos[i];
+					var imageContainer = imageTemplate.replace(toReplace, binaryData);
+					$(cells[i]).append(imageContainer);
+				}
+			});
         }
 
         function showMyFavourites() {}
 
-        function addPhoto() {}
+        function addPhoto() {
+			
+		}
     </script>
 
 </head>
@@ -87,8 +84,6 @@
                 </div>
 
             </div>
-
-
             <div id="content">
                 <h1>Ranking</h1>
 
