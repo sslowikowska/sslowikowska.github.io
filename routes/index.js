@@ -9,9 +9,55 @@ router.get('/', function(req, res) {
   res.render('index', { title: 'Express' });
 });
 
+router.post('/setFavourite', function(req, res) {	
+	var photoId = req.body.photoId;	
+	var isFavourite = req.body.isFavourite ? JSON.parse(req.body.isFavourite) : false;
+	console.log(photoId);
+	console.log(isFavourite);
+	db.open(function () {
+		var gfs = Grid(db, mongo);
+		gfs.collection('photoscollection')
+			.update({_id: mongo.BSONPure.ObjectID(photoId)},
+				{$set: {'metadata.favourite': isFavourite}},
+				function (err, result) {
+					db.close();
+					res.end();
+				    console.log(result);
+			   });
+	});
+});
+
+router.get(/^\/image\/(\w+)(?:\.\.(\w+))?$/, function(req, res) {
+	var photoId = req.params[0];
+	db.open(function () {
+		var gfs = Grid(db, mongo);
+		var bufs = [];
+		gfs.collection('photoscollection').findOne({_id: mongo.BSONPure.ObjectID(photoId)}, function(err, doc) {
+			var readstream = gfs.createReadStream({
+				_id: photoId,
+				root: 'photoscollection'
+			});
+			readstream.on('error', function (err) {
+			  console.log('An error occurred!', err);
+			  db.close();
+			  res.render('error', {message: err});
+			})
+			.on('data', function (d) { bufs.push(d);})
+			.on('close', function () { db.close(); })
+			.on('end', function () {
+				var fbuf = Buffer.concat(bufs);
+				var imageContent = fbuf.toString('base64');
+				res.render('image', {imageContent : imageContent, isFavourite: doc.metadata.favourite, photoId: photoId});
+				db.close();
+			});
+		});
+	});	
+});
+
 /* POST to retrieve photos data*/
 router.post('/photos', function(req, res) {
-	var photoId = req.body.photoId;
+	var photoId = req.body.photoId;	
+	var showFavourites = req.body.showFavourites ? JSON.parse(req.body.showFavourites) : false;
 	db.open(function () {
 		var gfs = Grid(db, mongo);
 		if (photoId) {
@@ -23,18 +69,26 @@ router.post('/photos', function(req, res) {
 			readstream.on('error', function (err) {
 			  console.log('An error occurred!', err);
 			  db.close();
-			  throw err;
+			  res.render('error', {message: err});
 			})
 			.on('data', function (d) { bufs.push(d);})
 			.on('close', function () { db.close(); })
 			.on('end', function () {
 				var fbuf = Buffer.concat(bufs);
-				res.send((fbuf.toString('base64')));
+				var imageContent = fbuf.toString('base64');
+				if (req.body.showBig) {
+					res.render('image', {imageContent : imageContent});
+				}
+				else {
+					res.send(imageContent);
+				}
 				db.close();
 			});
 		}
 		else {
-			gfs.collection('photoscollection').find().toArray(function (err, files) {
+			var filter = showFavourites ? { 'metadata.favourite': true} : null;
+			console.log(filter);
+			gfs.collection('photoscollection').find(filter).toArray(function (err, files) {
 				res.send({photos: files});
 				db.close();
 			});

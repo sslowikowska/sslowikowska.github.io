@@ -1,4 +1,4 @@
-<!DOCTYPE HTML>
+﻿<!DOCTYPE HTML>
 <html>
 
 <head>
@@ -9,42 +9,80 @@
 
     <script src="javascripts/jquery-1.11.1.min.js"></script>
     <script type="text/javascript">
-        $(document).ready(
-
+        $(document).ready(function() {
+			$('#uploadImageForm input[type=file]').on('change', function (e)
+			{
+				$('#uploadImageForm').data('images', e.target.files);
+			});
+			}
         );
 
-        function showMyPhotos() {
+        function showMyPhotos(showFavourites) {
             var photos = new Array();
-            $.ajax({url: '/pho4tos', type: 'POST'}).done(function (data) {
-				data = JSON.parse(data);
+			var photoId;
+            $.ajax({url: '/photos', type: 'POST', data: {showFavourites: showFavourites}}).done(function (data) {
 				photos = data.photos;
 				var photosNum = photos.length;
-				var cells = $('#leftPanel td');
-				var toReplace = 'binaryData';
-				var imageTemplate = '<img src="data:image/jpeg;base64' + toReplace + '" />';
-				for (var i = 0; i < photosNum; i++) {
-					var binaryData = photos[i];
-					var imageContainer = imageTemplate.replace(toReplace, binaryData);
-					$(cells[i]).append(imageContainer);
+				if (photosNum > 0) {
+					downloadPhoto(photos, 0, photosNum, showFavourites);
+				}
+				else {
+					alert('Nie znaleziono zdjęć');
 				}
 			});
         }
+		
+		function downloadPhoto(photosFromDb, index, photosLength, showFavourites) {
+		
+			$.ajax({url: '/photos', type: 'POST', data: { photoId: photosFromDb[index]._id }}).done(function (data) {
+				var cells = $('#content td');
+				var toReplace = 'binaryData';
+				var imageTemplate = '<a href="/image/'+ photosFromDb[index]._id +'"><img height="100" src="data:image/jpeg;base64,' + toReplace + '" /></a>';
+				var imageContainer = imageTemplate.replace(toReplace, data);
+				$(cells[index]).append(imageContainer);
+				if (index < photosLength - 1) {
+					downloadPhoto(photosFromDb, index + 1, photosLength);
+				}
+				else {
+					return;
+				}
+			});
+		}
 
-        function showMyFavourites() {}
-
+        function showMyFavourites() {
+			showMyPhotos(true);
+		}
+		
+		
         function addPhoto() {
-			var imageData = new FormData($('form')[0]);
+			$('#uploadImageForm').show();
+			$('#photoUploadDo').on('click', doPhotoUpload);
+		}
+		
+		function doPhotoUpload() {			
+			var imagesData = new FormData();
+			var selectedImages = $('#uploadImageForm').data('images');
+			if (!selectedImages || selectedImages.length == 0) {
+				alert('Wybierz plik');
+				return;
+			}
+			
+			$.each(selectedImages, function(key, value)
+			{
+				value.userName = 'Sylwia';
+				imagesData.append(key, value);
+			});
 			$.ajax({
 				url: '/upload',
 				type: 'POST',
-				data: imageData,
+				data: imagesData,
+				dataType: 'json',
 				cache: false,
 				contentType: false,
 				processData: false
-				}).error(function (data) {
-				console.log('ERROR');
-			}).success(function (data) {
-				console.log('SUCCESS');
+				})
+				.done(function (data) {
+					$('#uploadImageForm').hide();
 			});
 		}
     </script>
@@ -58,7 +96,7 @@
                 <div id="logo_text">
 
                     <h1><a href="/">Super<span class="logo_colour">stronka</span></a></h1>
-                    <h2>dodajesz fotki i w ogóle.</h2>
+                    <h2>dodajesz fotki i w ogóle</h2>
                 </div>
             </div>
 
@@ -70,7 +108,7 @@
 
                         <li class="selected"><a href="/">Strona główna</a>
                         </li>
-                        <li><a href="#">Wyloguj się</a>
+                        <li><a href="#">Wyloguj się
                         </li>
 
                     </ul>
@@ -84,16 +122,17 @@
                 <div class="sidebar">
 
                     <center>
-                        <button onclick='showMyPhotos()'>Moje zdjęcia</button>
+                        <button onclick='showMyPhotos(false)'>Moje zdjęcia</button>
                         <br />
                         <button onclick='showMyFavourites()'>Ulubione</button>
                         <br />
                         <button onclick='addPhoto()'>Dodaj zdjęcie</button>
                         <br />
-						<form method="post" enctype="multipart/form-data">
-							<label for="file">Filename:</label>
-							<input type="file" name="file" id="file"><br>
-							<input type="button" value="Upload">
+						<form style="display:none;" id="uploadImageForm" method="post" enctype="multipart/form-data">
+							<label for="photo">Filename:</label>
+							<input type="file" name="photo" id="photo"><br>
+							<input type="text" style="visibility:hidden;" name="userName">
+							<input id="photoUploadDo" type="button" value="Upload">
 						</form>
                     </center>
 
@@ -133,7 +172,7 @@
             </div>
         </div>
         <div id="scroll">
-            <a title="w górę" class="top" href="#">
+            <a title="idź do góry" class="top" href="#">
                 <img src="images/top.png" alt="top">
             </a>
         </div>
