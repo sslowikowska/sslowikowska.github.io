@@ -14,16 +14,26 @@
 			{
 				$('#uploadImageForm').data('images', e.target.files);
 			});
-			}
-        );
+			showMyPhotos(false, false);
+		});
 
-        function showMyPhotos(showFavourites) {
+        function showMyPhotos(showFavourites, showMine) {
             var photos = new Array();
 			var photoId;
-            $.ajax({url: '/photos', type: 'POST', data: {showFavourites: showFavourites}}).done(function (data) {
+            $.ajax({url: '/photos', type: 'POST', data: {showFavourites: showFavourites, showMine: showMine}}).done(function (data) {
 				photos = data.photos;
 				var photosNum = photos.length;
 				if (photosNum > 0) {
+					var photosTableDiv = $('#photosTable');
+					photosTableDiv.empty();
+					var rowNum = Math.ceil(photosNum / 3);
+					var tableHtml = '<table>';
+					for (var i = 0; i < rowNum; i++) {
+						tableHtml += '<tr><td></td><td></td><td></td></tr>';
+					}
+					
+					tableHtml += '</table>';
+					photosTableDiv.append(tableHtml);
 					downloadPhoto(photos, 0, photosNum, showFavourites);
 				}
 				else {
@@ -69,7 +79,6 @@
 			
 			$.each(selectedImages, function(key, value)
 			{
-				value.userName = 'Sylwia';
 				imagesData.append(key, value);
 			});
 			$.ajax({
@@ -83,6 +92,7 @@
 				})
 				.done(function (data) {
 					$('#uploadImageForm').hide();
+					showMyPhotos(false, false);
 			});
 		}
     </script>
@@ -106,9 +116,9 @@
 
                     <ul class="sf-menu" id="nav">
 
-                        <li class="selected"><a href="/">Strona główna</a>
+                        <li class="selected"><a href="/?userName=<%= userName %>">Strona główna</a>
                         </li>
-                        <li><a href="#">Wyloguj się
+                        <li><a href="/logout">Wyloguj się</a>
                         </li>
 
                     </ul>
@@ -122,7 +132,10 @@
                 <div class="sidebar">
 
                     <center>
-                        <button onclick='showMyPhotos(false)'>Moje zdjęcia</button>
+						<%= userName %>
+						<br />
+						<br />
+                        <button onclick='showMyPhotos(false, true)'>Moje zdjęcia</button>
                         <br />
                         <button onclick='showMyFavourites()'>Ulubione</button>
                         <br />
@@ -142,32 +155,10 @@
             <div id="content">
                 <h1>Ranking</h1>
 
-                <p>Ble ble ble ble</p>
-
 
                 <h2>Wszystkie zdjęcia</h2>
-
-                <table>
-                    <tr>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                    </tr>
-                    <tr>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                    </tr>
-                    <tr>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                    </tr>
-                </table>
-
-                <p>
-                    Bleb ble ble ble ble ble ble ble ble ble ble ble ble ble ble ble ble ble ble ble ble ble ble ble ble ble ble ble ble ble ble ble ble ble ble ble ble ble ble ble ble ble ble ble ble ble ble ble ble ble ble ble ble ble ble ble ble ble ble ble ble ble ble ble ble
-                </p>
+				<div id="photosTable">
+				</div>
 
             </div>
         </div>

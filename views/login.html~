@@ -1,0 +1,28 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+    <title>Super stronka</title>
+	<script src="../javascripts/jquery-1.11.1.min.js"></script>
+<script type="text/javascript">
+</script>
+
+<link rel="stylesheet" type="text/css" href="css/style.css">
+
+
+</head>
+<body>
+<center>
+<br>
+<h1>Witaj!</h1><br><br>
+<form method="POST" action="/login">
+	<label for="userName">Podaj login:</label>
+	<input id="userName" type="text" /><br><br>
+	<label for="password">Podaj hasło:</label>
+	<input id="password" type="password" /><br><br>
+	<button type="submit">Zaloguj/Zarejestruj</button>
+</form>
+</center>
+</body>
+</html>
+
+

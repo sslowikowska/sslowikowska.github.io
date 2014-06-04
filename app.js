@@ -7,6 +7,7 @@ var bodyParser = require('body-parser');
 var multer  = require('multer')
 var routes = require('./routes/index');
 var users = require('./routes/users');
+var session = require('express-session');
 
 var app = express();
 
@@ -14,13 +15,13 @@ var app = express();
 app.set('views', path.join(__dirname, 'views'));
 app.engine('html', require('ejs').renderFile);
 app.set('view engine', 'html');
-
 app.use(favicon());
 app.use(logger('dev'));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded());
 app.use(multer({ dest: './tmp/'}));
 app.use(cookieParser());
+app.use(session({ secret: 'secretSession', cookie: { maxAge: 3600000 }}));
 app.use(express.static(path.join(__dirname, 'public')));
 
 app.use('/', routes);
