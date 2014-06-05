@@ -5,6 +5,7 @@ var Grid    = require('gridfs-stream');
 var db      = new mongo.Db('projekt', new mongo.Server("localhost", 27017), {safe:true});
 db.open(function(err, p_db) {
   db = p_db;
+  db.createCollection('users', function(err) { });
 });
 
 /* GET home page. */
@@ -35,7 +36,6 @@ router.post('/login', function (req, res) {
 	req.session.regenerate(function () {
 		var userName = req.body.userName;
 		var password = req.body.password;
-		db.createCollection('users', function(err) { });
 		db.collection('users').findOne({name: userName}, function(err, doc) {
 			if (doc) {
 				if (doc.password == password) {
