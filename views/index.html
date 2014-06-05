@@ -1,4 +1,4 @@
-﻿<!DOCTYPE HTML>
+<!DOCTYPE HTML>
 <html>
 
 <head>
@@ -15,16 +15,16 @@
 				$('#uploadImageForm').data('images', e.target.files);
 			});
 			showMyPhotos(false, false);
+			showRanking();
 		});
-
-        function showMyPhotos(showFavourites, showMine) {
-            var photos = new Array();
-			var photoId;
-            $.ajax({url: '/photos', type: 'POST', data: {showFavourites: showFavourites, showMine: showMine}}).done(function (data) {
-				photos = data.photos;
+		
+        function showRanking() {
+            $.ajax({url: '/getRanking', type: 'POST'}).done(function (data) {
+				var photos = data.photos;
 				var photosNum = photos.length;
 				if (photosNum > 0) {
-					var photosTableDiv = $('#photosTable');
+					var divName = 'rankingTable';
+					var photosTableDiv = $('#' + divName);
 					photosTableDiv.empty();
 					var rowNum = Math.ceil(photosNum / 3);
 					var tableHtml = '<table>';
@@ -34,7 +34,30 @@
 					
 					tableHtml += '</table>';
 					photosTableDiv.append(tableHtml);
-					downloadPhoto(photos, 0, photosNum, showFavourites);
+					downloadPhoto(photos, 0, photosNum, false, divName);
+				}
+			});
+        }
+		
+        function showMyPhotos(showFavourites, showMine) {
+            var photos = new Array();
+			var photoId;
+            $.ajax({url: '/photos', type: 'POST', data: {showFavourites: showFavourites, showMine: showMine}}).done(function (data) {
+				photos = data.photos;
+				var photosNum = photos.length;
+				if (photosNum > 0) {
+					var divName = 'photosTable';
+					var photosTableDiv = $('#' + divName);
+					photosTableDiv.empty();
+					var rowNum = Math.ceil(photosNum / 3);
+					var tableHtml = '<table>';
+					for (var i = 0; i < rowNum; i++) {
+						tableHtml += '<tr><td></td><td></td><td></td></tr>';
+					}
+					
+					tableHtml += '</table>';
+					photosTableDiv.append(tableHtml);
+					downloadPhoto(photos, 0, photosNum, showFavourites, divName);
 				}
 				else {
 					alert('Nie znaleziono zdjęć');
@@ -42,16 +65,16 @@
 			});
         }
 		
-		function downloadPhoto(photosFromDb, index, photosLength, showFavourites) {
+		function downloadPhoto(photosFromDb, index, photosLength, showFavourites, divName) {
 		
 			$.ajax({url: '/photos', type: 'POST', data: { photoId: photosFromDb[index]._id }}).done(function (data) {
-				var cells = $('#content td');
+				var cells = $('#'+ divName + ' td');
 				var toReplace = 'binaryData';
 				var imageTemplate = '<a href="/image/'+ photosFromDb[index]._id +'"><img height="100" src="data:image/jpeg;base64,' + toReplace + '" /></a>';
 				var imageContainer = imageTemplate.replace(toReplace, data);
 				$(cells[index]).append(imageContainer);
 				if (index < photosLength - 1) {
-					downloadPhoto(photosFromDb, index + 1, photosLength);
+					downloadPhoto(photosFromDb, index + 1, photosLength, showFavourites, divName);
 				}
 				else {
 					return;
@@ -155,6 +178,8 @@
             <div id="content">
                 <h1>Ranking</h1>
 
+				<div id="rankingTable">
+				</div>
 
                 <h2>Wszystkie zdjęcia</h2>
 				<div id="photosTable">
