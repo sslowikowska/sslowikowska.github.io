@@ -2,6 +2,10 @@
 <html>
 <head>
     <title>Super stronka</title>
+	
+	<link rel="stylesheet" type="text/css" href="../css/style.css">
+	
+	
 	<script src="../javascripts/jquery-1.11.1.min.js"></script>
 <script type="text/javascript">
 	$(document).ready(function () {
@@ -20,12 +24,16 @@
 		});
 	}
 </script>
+
 </head>
 <body>
+<center>
 <button id="setAsFavourite" style="display:none;" onclick="setFavourite(true)" >dodaj do ulubionych</button>
 <button id ="removeFromFavourites" style="display:none;" onclick="setFavourite(false)" >usuń z ulubionych</button>
-<br />
+<br /><br>
 <img src="data:image/jpeg;base64,<%= imageContent %>" />
+
+</center>
 </body>
 </html>
 
