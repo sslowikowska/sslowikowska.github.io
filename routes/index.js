@@ -101,7 +101,7 @@ router.get(/^\/image\/(\w+)(?:\.\.(\w+))?$/, function(req, res) {
 		});
 });
 
-router.post('/setFavourite', function(req, res) { // post do ozaczenia obrazka jako faworyta
+router.post('/setFavourite', function(req, res) {
 	if (!req.session.user) {
 		res.send({});
 		return;
@@ -109,27 +109,35 @@ router.post('/setFavourite', function(req, res) { // post do ozaczenia obrazka j
 
 	var photoId = req.body.photoId;	
 	var isFavourite = req.body.isFavourite ? JSON.parse(req.body.isFavourite) : false;
-	console.log(photoId);
-	console.log(isFavourite);
 		var gfs = Grid(db, mongo);
 		if (isFavourite) {
 			gfs.collection('photoscollection')
 				.update({_id: mongo.BSONPure.ObjectID(photoId)},
-					{$addToSet: {'metadata.favouriteUsers': req.session.user}},
+					{$addToSet: {'metadata.favouriteUsers': req.session.user}, $inc: {'metadata.userFavouritesNum': 1}},
 					function (err, result) {
 						res.end();
-						console.log(result);
 				   });
 	    }
 		else {
 			gfs.collection('photoscollection')
 				.update({_id: mongo.BSONPure.ObjectID(photoId)},
-					{$pull: { 'metadata.favouriteUsers': req.session.user}},
+					{$pull: { 'metadata.favouriteUsers': req.session.user}, $inc: {'metadata.userFavouritesNum': -1}},
 					function (err, result) {
 						res.end();
-						console.log(result);
 				   });
 		}
+});
+
+router.post('/getRanking', function(req, res) {
+	if (!req.session.user) {
+		res.send({});
+		return;
+	}
+
+	var gfs = Grid(db, mongo);
+	gfs.collection('photoscollection').find().sort({'metadata.userFavouritesNum':-1}).limit(3).toArray(function (err, files) {
+				res.send({photos: files});
+	});
 });
 
 /* POST to retrieve photos data*/
@@ -193,7 +201,8 @@ router.post('/upload', function(req, res) {
 				metadata: {
 					userName: req.session.user,
 					favourite: false,
-					favouriteUsers : []
+					favouriteUsers : [],
+					userFavouritesNum : 0
 				}
 			});
 		writestream.on('close', function (file) {
