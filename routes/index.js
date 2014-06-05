@@ -35,6 +35,7 @@ router.post('/login', function (req, res) {
 	req.session.regenerate(function () {
 		var userName = req.body.userName;
 		var password = req.body.password;
+		db.createCollection('users', function(err) { });
 		db.collection('users').findOne({name: userName}, function(err, doc) {
 			if (doc) {
 				if (doc.password == password) {
@@ -94,29 +95,41 @@ router.get(/^\/image\/(\w+)(?:\.\.(\w+))?$/, function(req, res) {
 			.on('end', function () {
 				var fbuf = Buffer.concat(bufs);
 				var imageContent = fbuf.toString('base64');
-				res.render('image', {imageContent : imageContent, isFavourite: doc.metadata.favourite, photoId: photoId});
+				console.log(doc.metadata.favouriteUsers.indexOf(req.session.user));
+				res.render('image', {imageContent : imageContent, isFavourite: doc.metadata.favouriteUsers.indexOf(req.session.user) != -1, photoId: photoId});
 			});
 		});
 });
 
-router.post('/setFavourite', function(req, res) {
+router.post('/setFavourite', function(req, res) { // post do ozaczenia obrazka jako faworyta
 	if (!req.session.user) {
 		res.send({});
 		return;
 	}
-	
+
 	var photoId = req.body.photoId;	
 	var isFavourite = req.body.isFavourite ? JSON.parse(req.body.isFavourite) : false;
 	console.log(photoId);
 	console.log(isFavourite);
 		var gfs = Grid(db, mongo);
-		gfs.collection('photoscollection')
-			.update({_id: mongo.BSONPure.ObjectID(photoId)},
-				{$set: {'metadata.favourite': isFavourite}},
-				function (err, result) {
-					res.end();
-				    console.log(result);
-			   });
+		if (isFavourite) {
+			gfs.collection('photoscollection')
+				.update({_id: mongo.BSONPure.ObjectID(photoId)},
+					{$addToSet: {'metadata.favouriteUsers': req.session.user}},
+					function (err, result) {
+						res.end();
+						console.log(result);
+				   });
+	    }
+		else {
+			gfs.collection('photoscollection')
+				.update({_id: mongo.BSONPure.ObjectID(photoId)},
+					{$pull: { 'metadata.favouriteUsers': req.session.user}},
+					function (err, result) {
+						res.end();
+						console.log(result);
+				   });
+		}
 });
 
 /* POST to retrieve photos data*/
@@ -154,8 +167,11 @@ router.post('/photos', function(req, res) {
 			});
 		}
 		else {
-			var filter = showFavourites ? { 'metadata.favourite': true} : null;
-			filter =  showMine ? {'metadata.userName': req.session.user} : null;
+			var filter = showFavourites ? { 'metadata.favouriteUsers': { $in: [req.session.user] }} : null;
+			if(showMine) {
+				filter = {'metadata.userName': req.session.user};
+			}
+			
 			gfs.collection('photoscollection').find(filter).toArray(function (err, files) {
 				res.send({photos: files});
 			});
@@ -176,7 +192,8 @@ router.post('/upload', function(req, res) {
 				root: 'photoscollection',
 				metadata: {
 					userName: req.session.user,
-					favourite: false
+					favourite: false,
+					favouriteUsers : []
 				}
 			});
 		writestream.on('close', function (file) {
