@@ -1,4 +1,4 @@
-<!DOCTYPE HTML>
+﻿<!DOCTYPE HTML>
 <html>
 
 <head>
@@ -8,14 +8,44 @@
     <link rel="stylesheet" type="text/css" href="css/style.css">
 
     <script src="javascripts/jquery-1.11.1.min.js"></script>
+    <script src="javascripts/socket.io.js"></script>
     <script type="text/javascript">
         $(document).ready(function() {
+			io = io.connect();
+			io.on('new image', function() {
+				$('#newImageNotify').remove();
+				var notificationDiv = $('#newPhotoNotification');				
+				var currentNotifications = notificationDiv.data('notificationNum') || 0;
+				notificationDiv.data('notificationNum', ++currentNotifications);
+				notificationDiv.prepend('<button id="newImageNotify" style="padding-left:3px;padding-right:3px;width:auto;height:20px;background-color:red;color:white;">' + currentNotifications + '</button>');
+			});
+			io.on('favourites changed', function() {
+				$('#rankNotify').remove();
+				var notificationDiv = $('#rankingNotification');
+				var currentNotifications = notificationDiv.data('notificationNum') || 0;
+				notificationDiv.data('notificationNum', ++currentNotifications);
+				notificationDiv.prepend('<button id="rankNotify" style="padding-left:3px;padding-right:3px;width:auto;height:20px;background-color:red;color:white;">' + currentNotifications + '</button>');
+			});
 			$('#uploadImageForm input[type=file]').on('change', function (e)
 			{
 				$('#uploadImageForm').data('images', e.target.files);
 			});
 			showMyPhotos(false, false);
 			showRanking();
+		
+			$('#main').on('click', '#rankNotify', function() {
+				showRanking();
+				$('#rankNotify').remove();
+				$('#rankingNotification').data('notificationNum', 0);
+			});
+			
+			$('#main').on('click', '#newImageNotify', function() {
+				showMyPhotos(false, false);
+				$('#newImageNotify').remove();
+				$('#newPhotoNotification').data('notificationNum', 0);
+			});
+			
+			$('#photoUploadDo').on('click', doPhotoUpload);
 		});
 		
         function showRanking() {
@@ -89,7 +119,6 @@
 		
         function addPhoto() {
 			$('#uploadImageForm').show();
-			$('#photoUploadDo').on('click', doPhotoUpload);
 		}
 		
 		function doPhotoUpload() {			
@@ -116,6 +145,7 @@
 				.done(function (data) {
 					$('#uploadImageForm').hide();
 					showMyPhotos(false, false);
+					io.emit('add image')
 			});
 		}
     </script>
@@ -176,12 +206,11 @@
 
             </div>
             <div id="content">
-                <h1>Ranking</h1>
+				<div id="rankingNotification"> Ranking</div>
 
 				<div id="rankingTable">
 				</div>
-
-                <h2>Wszystkie zdjęcia</h2>
+				<div id="newPhotoNotification"> Wszystkie zdjęcia</div>
 				<div id="photosTable">
 				</div>
 

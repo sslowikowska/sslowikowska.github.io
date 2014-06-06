@@ -7,8 +7,10 @@
 	
 	
 	<script src="../javascripts/jquery-1.11.1.min.js"></script>
+    <script src="../javascripts/socket.io.js"></script>
 <script type="text/javascript">
 	$(document).ready(function () {
+		io = io.connect();
 		if (<%= isFavourite %>) {
 			$('#removeFromFavourites').show();
 		}
@@ -21,6 +23,8 @@
 		$.ajax({type:'POST', url: '/setFavourite', data: {isFavourite: isFavourite, photoId: '<%= photoId %>'}}).done(function() {
 			$('#removeFromFavourites').toggle();
 			$('#setAsFavourite').toggle();
+			io.emit('change favourite')
+			
 		});
 	}
 </script>
